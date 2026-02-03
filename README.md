@@ -30,7 +30,7 @@ cd ai-surviver-workshop
 pip install -r requirements.txt
 ```
 
-**Note:** This workshop uses the Anthropic API (Claude). You will need an API key — the facilitator will provide one during the workshop.
+**Note:** This workshop uses the Anthropic API (Claude). You will need an API key. The facilitator will provide one during the workshop.
 
 ## Workshop Structure
 
