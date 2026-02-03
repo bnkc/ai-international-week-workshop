@@ -20,13 +20,13 @@ The workshop will cover the following topics:
 
 | Notebook              | Link                                                                                                                                                                                    |
 | --------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Workshop Notebook** | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/bnkc/ai-surviver-workshop/blob/main/src/notebooks/workshop.ipynb) |
+| **Workshop Notebook** | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/bnkc/ai-survivor-workshop/blob/main/src/notebooks/workshop.ipynb) |
 
 ### Option 2: Run Locally
 
 ```bash
-git clone https://github.com/bnkc/ai-surviver-workshop.git
-cd ai-surviver-workshop
+git clone https://github.com/bnkc/ai-survivor-workshop.git
+cd ai-survlvor-workshop
 pip install -r requirements.txt
 ```
 
