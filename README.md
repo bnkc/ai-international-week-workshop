@@ -22,6 +22,8 @@ The workshop will cover the following topics:
 | --------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Workshop Notebook** | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/bnkc/ai-survivor-workshop/blob/main/src/notebooks/workshop.ipynb) |
 
+> **Important:** After opening, click **"Copy to Drive"** in the toolbar to save your own copy before editing.
+
 ### Option 2: Run Locally
 
 ```bash
