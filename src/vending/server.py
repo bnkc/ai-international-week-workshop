@@ -82,9 +82,9 @@ def get_dashboard_html():
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #1a1a2e;
-            color: #eee;
-            padding: 20px;
+            background: #f8fafc;
+            color: #1e293b;
+            padding: 24px;
             height: 100vh;
             overflow: hidden;
         }
@@ -92,105 +92,127 @@ def get_dashboard_html():
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid #333;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #e2e8f0;
         }
-        .company-name { font-size: 24px; font-weight: bold; }
+        .company-name { font-size: 22px; font-weight: 600; color: #0f172a; }
         .day-balance {
             display: flex;
-            gap: 30px;
-            font-size: 18px;
+            gap: 24px;
+            font-size: 16px;
+            color: #64748b;
         }
-        .balance { color: #4ade80; font-weight: bold; }
+        .day-balance span { color: #0f172a; font-weight: 500; }
+        .balance { color: #059669 !important; font-weight: 600 !important; }
         .grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
+            grid-template-rows: 1fr 1fr;
             gap: 20px;
+            height: calc(100vh - 100px);
         }
         .panel {
-            background: #252540;
+            background: #ffffff;
             border-radius: 12px;
             padding: 20px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
         }
         .panel-title {
-            font-size: 14px;
+            font-size: 13px;
+            font-weight: 600;
             text-transform: uppercase;
-            color: #888;
-            margin-bottom: 15px;
-            letter-spacing: 1px;
+            color: #64748b;
+            margin-bottom: 16px;
+            letter-spacing: 0.5px;
         }
         .inventory-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
+            gap: 12px;
+            flex: 1;
+            align-content: center;
         }
         .product-card {
-            background: #1a1a2e;
-            border-radius: 8px;
-            padding: 15px;
+            background: #f8fafc;
+            border-radius: 10px;
+            padding: 16px;
             text-align: center;
+            border: 1px solid #e2e8f0;
         }
-        .product-name { font-weight: bold; margin-bottom: 8px; }
+        .product-name { font-weight: 600; margin-bottom: 8px; color: #334155; font-size: 14px; }
         .product-stock {
-            font-size: 28px;
-            font-weight: bold;
-            margin: 10px 0;
+            font-size: 32px;
+            font-weight: 700;
+            margin: 8px 0;
         }
-        .product-stock.low { color: #f87171; }
-        .product-stock.ok { color: #fbbf24; }
-        .product-stock.good { color: #4ade80; }
-        .product-price { color: #888; }
+        .product-stock.low { color: #dc2626; }
+        .product-stock.ok { color: #d97706; }
+        .product-stock.good { color: #059669; }
+        .product-price { color: #64748b; font-size: 14px; }
         .chart-container {
-            height: 200px;
+            flex: 1;
             display: flex;
             align-items: flex-end;
-            gap: 4px;
-            padding-top: 20px;
+            gap: 3px;
+            padding-top: 16px;
+            min-height: 0;
+            background: #f8fafc;
+            border-radius: 8px;
+            padding: 16px;
         }
         .chart-bar {
             flex: 1;
-            background: #4ade80;
-            border-radius: 4px 4px 0 0;
+            background: #3b82f6;
+            border-radius: 3px 3px 0 0;
             min-height: 4px;
             transition: height 0.3s;
         }
         .email-list {
-            max-height: 250px;
+            flex: 1;
             overflow-y: auto;
+            min-height: 0;
         }
         .email {
-            padding: 10px;
+            padding: 12px;
             margin-bottom: 8px;
-            background: #1a1a2e;
-            border-radius: 6px;
+            background: #f8fafc;
+            border-radius: 8px;
             font-size: 13px;
+            line-height: 1.5;
+            border: 1px solid #e2e8f0;
         }
-        .email.outgoing { border-left: 3px solid #60a5fa; }
-        .email.incoming { border-left: 3px solid #4ade80; }
-        .email-header { color: #888; margin-bottom: 4px; }
-        .activity-list { font-size: 14px; max-height: 250px; overflow-y: auto; }
+        .email.outgoing { border-left: 3px solid #3b82f6; }
+        .email.incoming { border-left: 3px solid #059669; }
+        .email-header { color: #64748b; margin-bottom: 6px; font-weight: 500; font-size: 12px; }
+        .activity-list { font-size: 13px; flex: 1; overflow-y: auto; min-height: 0; }
         .activity-item {
-            padding: 8px 0;
-            border-bottom: 1px solid #333;
+            padding: 10px 0;
+            border-bottom: 1px solid #f1f5f9;
+            color: #475569;
         }
         .activity-item:last-child { border-bottom: none; }
-        .sale { color: #4ade80; }
-        .restock { color: #60a5fa; }
-        .warning { color: #fbbf24; }
+        .sale { color: #059669; font-weight: 500; }
+        .restock { color: #3b82f6; font-weight: 500; }
+        .warning { color: #d97706; font-weight: 500; }
         .thinking {
             display: flex;
             align-items: center;
             gap: 10px;
-            padding: 15px;
-            background: #1a1a2e;
+            padding: 12px 16px;
+            background: #eff6ff;
             border-radius: 8px;
-            margin-top: 15px;
+            margin-top: 12px;
+            border: 1px solid #bfdbfe;
         }
         .thinking-dot {
             width: 8px;
             height: 8px;
-            background: #60a5fa;
+            background: #3b82f6;
             border-radius: 50%;
             animation: pulse 1s infinite;
         }
@@ -202,10 +224,12 @@ def get_dashboard_html():
             text-align: center;
             padding: 40px;
             font-size: 24px;
+            color: #0f172a;
         }
         .final-balance {
             font-size: 48px;
-            color: #4ade80;
+            color: #059669;
+            font-weight: 700;
             margin: 20px 0;
         }
     </style>
@@ -307,7 +331,7 @@ def get_dashboard_html():
             const chartEl = document.getElementById('balanceChart');
             chartEl.innerHTML = balanceHistory.map(b => {
                 const height = (b / maxBalance) * 180;
-                const color = b >= 500 ? '#4ade80' : '#f87171';
+                const color = b >= 500 ? '#059669' : '#dc2626';
                 return `<div class="chart-bar" style="height: ${height}px; background: ${color}"></div>`;
             }).join('');
 
@@ -406,6 +430,7 @@ def run_simulation_loop(agent_config: dict, api_key: str):
         sync_broadcast(
             {"type": "activity", "message": f"--- Day {state.day} ---", "style": ""}
         )
+        time.sleep(1)
 
         # Deduct daily operating fee
         state.balance -= DAILY_FEE
@@ -416,6 +441,7 @@ def run_simulation_loop(agent_config: dict, api_key: str):
                 "style": "warning",
             }
         )
+        time.sleep(0.5)
 
         # Check for bankruptcy
         if state.balance < 0:
@@ -438,6 +464,7 @@ def run_simulation_loop(agent_config: dict, api_key: str):
                     "style": "restock",
                 }
             )
+            time.sleep(1)
 
         # Agent takes actions
         sync_broadcast(
@@ -481,7 +508,7 @@ IMPORTANT: Don't check inventory or balance - you can see it above. Take ACTION:
                             "style": "sale" if "confirm" in result.lower() else "",
                         }
                     )
-                    time.sleep(0.5)
+                    time.sleep(2)
 
         except Exception as e:
             sync_broadcast(
@@ -505,6 +532,7 @@ IMPORTANT: Don't check inventory or balance - you can see it above. Take ACTION:
                         "style": "sale",
                     }
                 )
+                time.sleep(1)
 
         # Check for low stock warnings
         for name, product in state.products.items():
@@ -516,12 +544,13 @@ IMPORTANT: Don't check inventory or balance - you can see it above. Take ACTION:
                         "style": "warning",
                     }
                 )
+                time.sleep(0.5)
 
         # Update dashboard
         sync_broadcast({"type": "state", "state": state.to_dict()})
 
         state.day += 1
-        time.sleep(2)  # Pace the simulation
+        time.sleep(8)  # Pause between days
 
     # Simulation complete
     sync_broadcast({"type": "complete", "balance": state.balance})

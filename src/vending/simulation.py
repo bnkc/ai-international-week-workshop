@@ -18,9 +18,9 @@ class GameState:
     balance: float = 500.0
     products: dict = field(
         default_factory=lambda: {
-            "Soda": Product("Soda", stock=10, price=1.75, wholesale_cost=0.70),
-            "Chips": Product("Chips", stock=10, price=1.25, wholesale_cost=0.45),
-            "Candy": Product("Candy", stock=10, price=0.99, wholesale_cost=0.30),
+            "Soda": Product("Soda", stock=0, price=1.75, wholesale_cost=0.70),
+            "Chips": Product("Chips", stock=0, price=1.25, wholesale_cost=0.45),
+            "Candy": Product("Candy", stock=0, price=0.99, wholesale_cost=0.30),
         }
     )
     pending_orders: list = field(default_factory=list)
