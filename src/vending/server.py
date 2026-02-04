@@ -85,7 +85,8 @@ def get_dashboard_html():
             background: #1a1a2e;
             color: #eee;
             padding: 20px;
-            min-height: 100vh;
+            height: 100vh;
+            overflow: hidden;
         }
         .header {
             display: flex;
@@ -168,7 +169,7 @@ def get_dashboard_html():
         .email.outgoing { border-left: 3px solid #60a5fa; }
         .email.incoming { border-left: 3px solid #4ade80; }
         .email-header { color: #888; margin-bottom: 4px; }
-        .activity-list { font-size: 14px; }
+        .activity-list { font-size: 14px; max-height: 250px; overflow-y: auto; }
         .activity-item {
             padding: 8px 0;
             border-bottom: 1px solid #333;
@@ -409,13 +410,21 @@ def run_simulation_loop(agent_config: dict, api_key: str):
         # Deduct daily operating fee
         state.balance -= DAILY_FEE
         sync_broadcast(
-            {"type": "activity", "message": f"Daily fee: -${DAILY_FEE:.2f}", "style": "warning"}
+            {
+                "type": "activity",
+                "message": f"Daily fee: -${DAILY_FEE:.2f}",
+                "style": "warning",
+            }
         )
 
         # Check for bankruptcy
         if state.balance < 0:
             sync_broadcast(
-                {"type": "activity", "message": "BANKRUPT! Game over.", "style": "warning"}
+                {
+                    "type": "activity",
+                    "message": "BANKRUPT! Game over.",
+                    "style": "warning",
+                }
             )
             break
 
@@ -435,18 +444,22 @@ def run_simulation_loop(agent_config: dict, api_key: str):
             {"type": "thinking", "show": True, "text": "Agent is deciding..."}
         )
 
+        # Build stock warnings
+        low_stock = [n for n, p in state.products.items() if p.stock <= 5]
+        stock_warning = f" LOW STOCK: {', '.join(low_stock)}!" if low_stock else ""
+
         situation = f"""Day {state.day} of {state.max_days}
-Balance: ${state.balance:.2f} (daily fee: $5)
-Inventory: {", ".join(f"{n}: {p.stock} @ ${p.price:.2f}" for n, p in state.products.items())}
+Balance: ${state.balance:.2f}
+Inventory: {", ".join(f"{n}: {p.stock} @ ${p.price:.2f}" for n, p in state.products.items())}{stock_warning}
 Yesterday's sales: {state.sales_today if state.sales_today else "None yet"}
 Pending deliveries: {len(state.pending_orders)}
 
-Available suppliers:
-- QuickStock: Soda $0.70, Chips $0.45, Candy $0.30 (reliable, 1-day delivery)
-- VendMart: Soda $0.60, Chips $0.40, Candy $0.25 (sometimes slow)
-- BulkBarn: Soda $0.50, Chips $0.35, Candy $0.20 (cheapest, 3-day delivery)
+Suppliers (email to order):
+- QuickStock: Soda $0.70, Chips $0.45, Candy $0.30 (1-day delivery)
+- VendMart: Soda $0.60, Chips $0.40, Candy $0.25 (1-2 days)
+- BulkBarn: Soda $0.50, Chips $0.35, Candy $0.20 (3-day delivery)
 
-You pay $5/day to operate. Don't go bankrupt! Take up to 2 actions."""
+IMPORTANT: Don't check inventory or balance - you can see it above. Take ACTION: email suppliers to order, or set prices. Take 1-2 actions."""
 
         try:
             response = client.messages.create(

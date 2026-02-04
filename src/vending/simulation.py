@@ -18,9 +18,9 @@ class GameState:
     balance: float = 500.0
     products: dict = field(
         default_factory=lambda: {
-            "Soda": Product("Soda", stock=0, price=1.75, wholesale_cost=0.70),
-            "Chips": Product("Chips", stock=0, price=1.25, wholesale_cost=0.45),
-            "Candy": Product("Candy", stock=0, price=0.99, wholesale_cost=0.30),
+            "Soda": Product("Soda", stock=10, price=1.75, wholesale_cost=0.70),
+            "Chips": Product("Chips", stock=10, price=1.25, wholesale_cost=0.45),
+            "Candy": Product("Candy", stock=10, price=0.99, wholesale_cost=0.30),
         }
     )
     pending_orders: list = field(default_factory=list)
@@ -231,7 +231,11 @@ def generate_supplier_response(
         # Process the order
         base_days = supplier_info.get("delivery_days", 1)
         # Unreliable suppliers may add 1 extra day
-        delivery_days = base_days if supplier_info["reliable"] else base_days + random.choice([0, 1])
+        delivery_days = (
+            base_days
+            if supplier_info["reliable"]
+            else base_days + random.choice([0, 1])
+        )
 
         for product, qty in quantities.items():
             cost = qty * supplier_info.get(product, 0)
@@ -247,9 +251,7 @@ def generate_supplier_response(
 
         order_summary = ", ".join(f"{q} {p}" for p, q in quantities.items())
         delivery_msg = "tomorrow" if delivery_days == 1 else f"in {delivery_days} days"
-        return (
-            f"Order confirmed: {order_summary}. Total: ${total:.2f}. Delivery {delivery_msg}."
-        )
+        return f"Order confirmed: {order_summary}. Total: ${total:.2f}. Delivery {delivery_msg}."
 
     # Generic response for non-orders
     if supplier_info["personality"] == "pushy":
