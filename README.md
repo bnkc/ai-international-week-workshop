@@ -18,9 +18,7 @@ The workshop will cover the following topics:
 
 | Notebook              | Link                                                                                                                                                                                                     |
 | --------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Workshop Notebook** | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/bnkc/ai-international-week-workshop/blob/main/src/notebooks/workshop.ipynb) |
-
-> **Important:** After opening, click **"Copy to Drive"** in the toolbar to save your own copy before editing.
+| **Workshop Notebook** | [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/bnkc/ai-international-week-workshop/blob/main/src/notebooks/workshop.ipynb#copy=true) |
 
 ### Option 2: Run Locally
 
