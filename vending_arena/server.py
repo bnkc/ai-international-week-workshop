@@ -523,7 +523,7 @@ def launch_simulation(agent_config: dict, api_key: str, port: int = 8000):
     try:
         from google.colab import output
 
-        output.serve_kernel_port_as_iframe(port, height=600)
+        output.serve_kernel_port_as_iframe(port, height=800)
     except ImportError:
         from IPython.display import HTML, display
 
