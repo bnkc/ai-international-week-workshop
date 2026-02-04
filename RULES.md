@@ -21,54 +21,57 @@ Each day follows this sequence:
 Customers are simulated automatically at the end of each day. You don't control this.
 
 **Base demand per day:**
+
 - Soda: ~20 customers
 - Chips: ~15 customers
 - Candy: ~18 customers
 
 **Price affects demand:**
+
 ```
 demand = base_demand × (2.0 / (price + 0.5)) × random(0.7 to 1.3)
 ```
 
 | Price | Demand Multiplier | Example (Soda) |
-|-------|-------------------|----------------|
-| $0.50 | 2.0x | ~40 sales |
-| $1.00 | 1.3x | ~26 sales |
-| $1.50 | 1.0x | ~20 sales |
-| $2.00 | 0.8x | ~16 sales |
-| $3.00 | 0.6x | ~12 sales |
+| ----- | ----------------- | -------------- |
+| $0.50 | 2.0x              | ~40 sales      |
+| $1.00 | 1.3x              | ~26 sales      |
+| $1.50 | 1.0x              | ~20 sales      |
+| $2.00 | 0.8x              | ~16 sales      |
+| $3.00 | 0.6x              | ~12 sales      |
 
 **Key insight:** Lower prices = more sales, but thinner margins. Higher prices = fewer sales, but better margins.
 
 ## Products
 
 | Product | Default Price | Wholesale Cost (cheapest) |
-|---------|---------------|---------------------------|
-| Soda    | $1.75         | $0.50 (BulkBarn)         |
-| Chips   | $1.25         | $0.35 (BulkBarn)         |
-| Candy   | $0.99         | $0.20 (BulkBarn)         |
+| ------- | ------------- | ------------------------- |
+| Soda    | $1.75         | $0.50 (BulkBarn)          |
+| Chips   | $1.25         | $0.35 (BulkBarn)          |
+| Candy   | $0.99         | $0.20 (BulkBarn)          |
 
 ## Suppliers
 
-| Supplier | Soda | Chips | Candy | Delivery | Notes |
-|----------|------|-------|-------|----------|-------|
-| QuickStock | $0.70 | $0.45 | $0.30 | 1 day | Reliable, fast |
-| VendMart | $0.60 | $0.40 | $0.25 | 1-2 days | Cheaper but unreliable |
-| BulkBarn | $0.50 | $0.35 | $0.20 | 3 days | Cheapest but slow |
+| Supplier   | Soda  | Chips | Candy | Delivery | Notes                  |
+| ---------- | ----- | ----- | ----- | -------- | ---------------------- |
+| QuickStock | $0.70 | $0.45 | $0.30 | 1 day    | Reliable, fast         |
+| VendMart   | $0.60 | $0.40 | $0.25 | 1-2 days | Cheaper but unreliable |
+| BulkBarn   | $0.50 | $0.35 | $0.20 | 3 days   | Cheapest but slow      |
 
 **How to order:** Send an email with quantities. Example:
+
 > "I'd like to order 50 sodas, 30 chips, and 20 candy"
 
 The supplier auto-confirms and deducts money from your balance immediately.
 
 ## Available Tools
 
-| Tool | What it does |
-|------|--------------|
-| `send_email` | Email a supplier to place an order |
-| `set_price` | Change the retail price of a product |
-| `check_inventory` | See current stock levels |
-| `check_balance` | See current bank balance |
+| Tool              | What it does                         |
+| ----------------- | ------------------------------------ |
+| `send_email`      | Email a supplier to place an order   |
+| `set_price`       | Change the retail price of a product |
+| `check_inventory` | See current stock levels             |
+| `check_balance`   | See current bank balance             |
 
 ## Money Flow
 
@@ -119,6 +122,7 @@ Day 5 starts
 ## Quick Math
 
 To break even on daily fees alone ($5/day):
+
 - At $1.25 margin per soda: need to sell 4 sodas/day
 - At $0.80 margin per chips: need to sell 7 chips/day
 - At $0.70 margin per candy: need to sell 8 candy/day
