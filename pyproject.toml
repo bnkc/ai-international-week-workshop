@@ -1,7 +1,7 @@
 [project]
-name = "ai-survivor-workshop"
+name = "ai-international-week-workshop"
 version = "0.1.0"
-description = "AI Survivor: Build an Agent in 2 Hours, Then Watch Them Scheme"
+description = "AI Vending Machine Workshop: Build an Agent in 2 Hours"
 requires-python = ">=3.10"
 dependencies = [
     "anthropic>=0.40.0",
