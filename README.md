@@ -12,7 +12,7 @@ The workshop will cover the following topics:
 - 🔗 How to chain LLM calls into workflows and why they break
 - 🔧 Tool calling: giving LLMs the ability to take actions
 - 🤖 Agents: LLMs that pursue goals and decide their own steps
-- 🏪 Vending Simulation — watch your agent run a vending machine business
+- 🏪 Vending Simulation: watch your agent run a vending machine business
 
 ## Getting Started
 

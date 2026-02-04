@@ -16,11 +16,13 @@ class Product:
 class GameState:
     day: int = 1
     balance: float = 500.0
-    products: dict = field(default_factory=lambda: {
-        "Soda": Product("Soda", stock=0, price=1.75, wholesale_cost=0.70),
-        "Chips": Product("Chips", stock=0, price=1.25, wholesale_cost=0.45),
-        "Candy": Product("Candy", stock=0, price=0.99, wholesale_cost=0.30),
-    })
+    products: dict = field(
+        default_factory=lambda: {
+            "Soda": Product("Soda", stock=0, price=1.75, wholesale_cost=0.70),
+            "Chips": Product("Chips", stock=0, price=1.25, wholesale_cost=0.45),
+            "Candy": Product("Candy", stock=0, price=0.99, wholesale_cost=0.30),
+        }
+    )
     pending_orders: list = field(default_factory=list)
     sales_today: dict = field(default_factory=dict)
     emails: list = field(default_factory=list)
@@ -32,7 +34,11 @@ class GameState:
             "day": self.day,
             "balance": round(self.balance, 2),
             "products": {
-                name: {"stock": p.stock, "price": p.price, "wholesale_cost": p.wholesale_cost}
+                name: {
+                    "stock": p.stock,
+                    "price": p.price,
+                    "wholesale_cost": p.wholesale_cost,
+                }
                 for name, p in self.products.items()
             },
             "sales_today": self.sales_today,
@@ -73,7 +79,9 @@ def simulate_customers(state: GameState) -> dict:
 
         # Demand affected by price (lower price = more demand)
         price_factor = 2.0 / (product.price + 0.5)  # Higher prices reduce demand
-        demand = int(base_demand[product_name] * price_factor * random.uniform(0.7, 1.3))
+        demand = int(
+            base_demand[product_name] * price_factor * random.uniform(0.7, 1.3)
+        )
 
         # Can't sell more than we have
         sold = min(demand, product.stock)
@@ -100,7 +108,9 @@ def process_pending_orders(state: GameState):
     return delivered
 
 
-def handle_tool_call(state: GameState, tool_name: str, args: dict, llm_client=None) -> str:
+def handle_tool_call(
+    state: GameState, tool_name: str, args: dict, llm_client=None
+) -> str:
     """Execute a tool and return the result."""
 
     if tool_name == "send_email":
@@ -136,12 +146,14 @@ def handle_email(state: GameState, args: dict, llm_client=None) -> str:
     body = args.get("body", "")
 
     # Log outgoing email
-    state.emails.append({
-        "direction": "out",
-        "to": to,
-        "subject": subject,
-        "body": body[:200],
-    })
+    state.emails.append(
+        {
+            "direction": "out",
+            "to": to,
+            "subject": subject,
+            "body": body[:200],
+        }
+    )
 
     # Find supplier
     supplier = None
@@ -157,29 +169,37 @@ def handle_email(state: GameState, args: dict, llm_client=None) -> str:
     response = generate_supplier_response(state, supplier, subject, body, llm_client)
 
     # Log incoming email
-    state.emails.append({
-        "direction": "in",
-        "from": supplier,
-        "subject": f"Re: {subject}",
-        "body": response[:200],
-    })
+    state.emails.append(
+        {
+            "direction": "in",
+            "from": supplier,
+            "subject": f"Re: {subject}",
+            "body": response[:200],
+        }
+    )
 
     return f"Email sent to {supplier}. They replied: {response}"
 
 
-def generate_supplier_response(state: GameState, supplier: str, subject: str, body: str, llm_client=None) -> str:
+def generate_supplier_response(
+    state: GameState, supplier: str, subject: str, body: str, llm_client=None
+) -> str:
     """Generate a supplier response, optionally using LLM."""
     supplier_info = SUPPLIERS[supplier]
     body_lower = body.lower()
 
     # Check if this looks like an order
-    is_order = any(word in body_lower for word in ["order", "buy", "purchase", "want", "need", "send"])
+    is_order = any(
+        word in body_lower
+        for word in ["order", "buy", "purchase", "want", "need", "send"]
+    )
 
     # Parse quantities from the email
     quantities = {}
     for product in ["soda", "chips", "candy"]:
         # Look for patterns like "20 sodas" or "soda: 20"
         import re
+
         patterns = [
             rf"(\d+)\s*{product}",
             rf"{product}[:\s]+(\d+)",
@@ -202,15 +222,21 @@ def generate_supplier_response(state: GameState, supplier: str, subject: str, bo
         for product, qty in quantities.items():
             cost = qty * supplier_info.get(product, 0)
             state.balance -= cost
-            state.pending_orders.append({
-                "product": product,
-                "quantity": qty,
-                "cost": cost,
-                "days_remaining": 1 if supplier_info["reliable"] else random.choice([1, 2]),
-            })
+            state.pending_orders.append(
+                {
+                    "product": product,
+                    "quantity": qty,
+                    "cost": cost,
+                    "days_remaining": 1
+                    if supplier_info["reliable"]
+                    else random.choice([1, 2]),
+                }
+            )
 
         order_summary = ", ".join(f"{q} {p}" for p, q in quantities.items())
-        return f"Order confirmed: {order_summary}. Total: ${total:.2f}. Delivery tomorrow."
+        return (
+            f"Order confirmed: {order_summary}. Total: ${total:.2f}. Delivery tomorrow."
+        )
 
     # Generic response for non-orders
     if supplier_info["personality"] == "pushy":
