@@ -5,4 +5,5 @@ description = "AI Survivor: Build an Agent in 2 Hours, Then Watch Them Scheme"
 requires-python = ">=3.10"
 dependencies = [
     "anthropic>=0.40.0",
+    "requests>=2.32.5",
 ]
