@@ -254,7 +254,8 @@ def get_dashboard_html():
         let balanceHistory = [500];
         let companyName = "Your Company";
 
-        const ws = new WebSocket(`ws://${window.location.host}/ws`);
+        const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+        const ws = new WebSocket(`${wsProtocol}//${window.location.host}/ws`);
 
         ws.onmessage = (event) => {
             const data = JSON.parse(event.data);
