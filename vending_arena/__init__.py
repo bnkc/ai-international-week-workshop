@@ -1,3 +1,3 @@
-from .server import start_simulation
+from .server import launch_simulation
 
-__all__ = ["start_simulation"]
+__all__ = ["launch_simulation"]
