@@ -1,10 +1,8 @@
-# AI Vending Machine Workshop
+# Akur8 International Week: From Single LLM Calls to Agents
 
-#### Akur8 International Week Workshop
+This is the code repo for the AI workshop. A practical experience building AI agents.
 
-This is the code repo to accompany the AI Vending Machine workshop. The workshop is designed to provide a hands-on experience building AI agents.
-
-By the end of this workshop, you'll understand the spectrum from simple LLM calls to autonomous AI agents, and you'll build your own AI vending machine manager that runs a business simulation.
+By the end of this workshop, you'll understand the spectrum from simple LLM calls to autonomous AI agents, and you'll build your own agent that runs autonomously.
 
 The workshop will cover the following topics:
 
@@ -12,7 +10,7 @@ The workshop will cover the following topics:
 - 🔗 How to chain LLM calls into workflows and why they break
 - 🔧 Tool calling: giving LLMs the ability to take actions
 - 🤖 Agents: LLMs that pursue goals and decide their own steps
-- 🏪 Vending Simulation: watch your agent run a vending machine business
+- 🎮 A fun surprise at the end!
 
 ## Getting Started
 
@@ -40,5 +38,5 @@ pip install -r requirements.txt
 | ----------- | --------------------------------- | -------------------------------------- |
 | 0:00 – 0:45 | **Part 1: The Capability Ladder** | Presentation + guided notebook         |
 | 0:45 – 1:00 | **☕ Coffee Break**               | Catch up, mingle                       |
-| 1:00 – 1:45 | **Part 2: Build Your Agent**      | Everyone customizes their vending agent|
-| 1:45 – 2:00 | **Part 3: The Simulation**        | Watch your agent run the business      |
+| 1:00 – 1:45 | **Part 2: Build Your Agent**      | Everyone builds their own agent        |
+| 1:45 – 2:00 | **Part 3: Watch It Run**          | See your agent in action!              |

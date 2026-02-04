@@ -160,7 +160,7 @@ def test_agent(scenario, tools, system_prompt, company_name="Your Agent"):
 
     print()
     print("=" * 50)
-    print("Not happy? Tweak your strategy or sliders and re-run!")
+    print("Not happy? Tweak your strategy or sliders and run again!")
 
 
 def build_system_prompt(company_name, strategy, pricing, risk, negotiation):
