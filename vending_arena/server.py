@@ -34,7 +34,7 @@ VENDING_TOOLS = [
             "properties": {
                 "to": {
                     "type": "string",
-                    "description": "Supplier name (QuickStock or VendMart)",
+                    "description": "Supplier name (QuickStock, VendMart, or BulkBarn)",
                 },
                 "subject": {"type": "string", "description": "Email subject"},
                 "body": {
@@ -427,8 +427,9 @@ Yesterday's sales: {state.sales_today if state.sales_today else "None yet"}
 Pending deliveries: {len(state.pending_orders)}
 
 Available suppliers:
-- QuickStock: Soda $0.70, Chips $0.45, Candy $0.30 (reliable)
+- QuickStock: Soda $0.70, Chips $0.45, Candy $0.30 (reliable, 1-day delivery)
 - VendMart: Soda $0.60, Chips $0.40, Candy $0.25 (sometimes slow)
+- BulkBarn: Soda $0.50, Chips $0.35, Candy $0.20 (cheapest, 3-day delivery)
 
 Take up to 2 actions this turn."""
 
@@ -523,7 +524,7 @@ def launch_simulation(agent_config: dict, api_key: str, port: int = 8000):
     try:
         from google.colab import output
 
-        output.serve_kernel_port_as_iframe(port, height=800)
+        output.serve_kernel_port_as_iframe(port, height=900)
     except ImportError:
         from IPython.display import HTML, display
 

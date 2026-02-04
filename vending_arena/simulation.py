@@ -53,6 +53,7 @@ SUPPLIERS = {
         "Chips": 0.45,
         "Candy": 0.30,
         "reliable": True,
+        "delivery_days": 1,
         "personality": "professional",
     },
     "VendMart": {
@@ -60,7 +61,16 @@ SUPPLIERS = {
         "Chips": 0.40,
         "Candy": 0.25,
         "reliable": False,
+        "delivery_days": 1,  # but unreliable, may take 2
         "personality": "pushy",
+    },
+    "BulkBarn": {
+        "Soda": 0.50,
+        "Chips": 0.35,
+        "Candy": 0.20,
+        "reliable": True,
+        "delivery_days": 3,  # slow but cheapest
+        "personality": "friendly",
     },
 }
 
@@ -219,6 +229,10 @@ def generate_supplier_response(
             return f"Your order totals ${total:.2f} but your balance is only ${state.balance:.2f}. Please adjust your order."
 
         # Process the order
+        base_days = supplier_info.get("delivery_days", 1)
+        # Unreliable suppliers may add 1 extra day
+        delivery_days = base_days if supplier_info["reliable"] else base_days + random.choice([0, 1])
+
         for product, qty in quantities.items():
             cost = qty * supplier_info.get(product, 0)
             state.balance -= cost
@@ -227,19 +241,20 @@ def generate_supplier_response(
                     "product": product,
                     "quantity": qty,
                     "cost": cost,
-                    "days_remaining": 1
-                    if supplier_info["reliable"]
-                    else random.choice([1, 2]),
+                    "days_remaining": delivery_days,
                 }
             )
 
         order_summary = ", ".join(f"{q} {p}" for p, q in quantities.items())
+        delivery_msg = "tomorrow" if delivery_days == 1 else f"in {delivery_days} days"
         return (
-            f"Order confirmed: {order_summary}. Total: ${total:.2f}. Delivery tomorrow."
+            f"Order confirmed: {order_summary}. Total: ${total:.2f}. Delivery {delivery_msg}."
         )
 
     # Generic response for non-orders
     if supplier_info["personality"] == "pushy":
         return "Thanks for reaching out! We have the BEST prices in town. What can I get you? We're running a special today - order now!"
+    elif supplier_info["personality"] == "friendly":
+        return f"Hey there! Great to hear from you. We've got wholesale prices: Soda ${supplier_info['Soda']:.2f}, Chips ${supplier_info['Chips']:.2f}, Candy ${supplier_info['Candy']:.2f}. Delivery takes 3 days but you'll save big!"
     else:
         return f"Hello! Happy to help. Our current prices: Soda ${supplier_info['Soda']:.2f}, Chips ${supplier_info['Chips']:.2f}, Candy ${supplier_info['Candy']:.2f}. Let me know what you need."
