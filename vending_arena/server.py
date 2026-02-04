@@ -398,11 +398,26 @@ def run_simulation_loop(agent_config: dict, api_key: str):
     sync_broadcast({"type": "state", "state": state.to_dict()})
     sync_broadcast({"type": "activity", "message": "Simulation started!", "style": ""})
 
+    DAILY_FEE = 5.0  # Daily operating cost
+
     while state.day <= state.max_days and simulation_running:
         # Start of day
         sync_broadcast(
             {"type": "activity", "message": f"--- Day {state.day} ---", "style": ""}
         )
+
+        # Deduct daily operating fee
+        state.balance -= DAILY_FEE
+        sync_broadcast(
+            {"type": "activity", "message": f"Daily fee: -${DAILY_FEE:.2f}", "style": "warning"}
+        )
+
+        # Check for bankruptcy
+        if state.balance < 0:
+            sync_broadcast(
+                {"type": "activity", "message": "BANKRUPT! Game over.", "style": "warning"}
+            )
+            break
 
         # Deliver pending orders
         delivered = process_pending_orders(state)
@@ -421,7 +436,7 @@ def run_simulation_loop(agent_config: dict, api_key: str):
         )
 
         situation = f"""Day {state.day} of {state.max_days}
-Balance: ${state.balance:.2f}
+Balance: ${state.balance:.2f} (daily fee: $5)
 Inventory: {", ".join(f"{n}: {p.stock} @ ${p.price:.2f}" for n, p in state.products.items())}
 Yesterday's sales: {state.sales_today if state.sales_today else "None yet"}
 Pending deliveries: {len(state.pending_orders)}
@@ -431,7 +446,7 @@ Available suppliers:
 - VendMart: Soda $0.60, Chips $0.40, Candy $0.25 (sometimes slow)
 - BulkBarn: Soda $0.50, Chips $0.35, Candy $0.20 (cheapest, 3-day delivery)
 
-Take up to 2 actions this turn."""
+You pay $5/day to operate. Don't go bankrupt! Take up to 2 actions."""
 
         try:
             response = client.messages.create(
