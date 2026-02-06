@@ -398,13 +398,16 @@ async def broadcast(message: dict):
             websocket_clients.remove(client)
 
 
-def run_simulation_loop(agent_config: dict, api_key: str):
+def run_simulation_loop(agent_config: dict, api_key: str, tools: list = None):
     """Run the simulation in a background thread."""
     global simulation_state, simulation_running
 
     client = anthropic.Anthropic(api_key=api_key)
     state = GameState()
     simulation_running = True
+
+    # Use provided tools or fall back to default
+    agent_tools = tools if tools is not None else VENDING_TOOLS
 
     # Store company name for dashboard
     simulation_state = {
@@ -493,7 +496,7 @@ IMPORTANT: Don't check inventory or balance - you can see it above. Take ACTION:
                 model="claude-haiku-4-5",
                 max_tokens=1024,
                 system=agent_config["system_prompt"],
-                tools=VENDING_TOOLS,
+                tools=agent_tools,
                 messages=[{"role": "user", "content": situation}],
             )
 
@@ -557,7 +560,7 @@ IMPORTANT: Don't check inventory or balance - you can see it above. Take ACTION:
     simulation_running = False
 
 
-def launch_simulation(agent_config: dict, api_key: str, port: int = 8000):
+def launch_simulation(agent_config: dict, api_key: str, tools: list = None, port: int = 8000):
     """Launch the simulation with embedded display."""
     global simulation_state
 
@@ -574,7 +577,7 @@ def launch_simulation(agent_config: dict, api_key: str, port: int = 8000):
 
     # Start simulation
     threading.Thread(
-        target=run_simulation_loop, args=(agent_config, api_key), daemon=True
+        target=run_simulation_loop, args=(agent_config, api_key, tools), daemon=True
     ).start()
 
     # Display - try Colab embed, fallback to link

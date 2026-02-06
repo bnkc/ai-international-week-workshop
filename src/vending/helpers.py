@@ -71,14 +71,15 @@ def call_llm_structured(prompt, fields):
 
 def call_llm_with_tools(prompt, tools, system=None):
     """Send a prompt to the LLM with tools available."""
+    if system is None:
+        system = "Take action immediately using the available tools. Don't ask clarifying questions."
     kwargs = {
         "model": MODEL,
         "max_tokens": 1024,
         "tools": tools,
+        "system": system,
         "messages": [{"role": "user", "content": prompt}],
     }
-    if system:
-        kwargs["system"] = system
     return client.messages.create(**kwargs)
 
 
@@ -97,8 +98,6 @@ Be strategic. Take ONE action at a time."""
     actions_taken = []
 
     for step in range(max_steps):
-        print(f"\n--- Step {step + 1} ---")
-
         prompt = f"""CURRENT SITUATION:
 {game_state}
 
@@ -119,9 +118,13 @@ What do you do next? Choose ONE action."""
             if block.type == "tool_use":
                 action = {"tool": block.name, "args": block.input}
                 actions_taken.append(action)
-                print(f"  🎬 {block.name}({json.dumps(block.input)})")
-            elif block.type == "text" and block.text.strip():
-                print(f"  💭 {block.text[:100]}")
+
+    print(f"🎬 THE AGENT TOOK {len(actions_taken)} ACTIONS:\n")
+    for i, action in enumerate(actions_taken, 1):
+        print(f"   Step {i}: {action['tool']}")
+        for key, value in action["args"].items():
+            print(f"      {key}: {value}")
+        print()
 
     return actions_taken
 
@@ -153,7 +156,9 @@ def test_agent(scenario, tools, system_prompt, company_name="Your Agent"):
         if block.type == "tool_use":
             print(f"   Tool: {block.name}")
             for key, value in block.input.items():
-                val_str = str(value)[:60] + "..." if len(str(value)) > 60 else str(value)
+                val_str = (
+                    str(value)[:60] + "..." if len(str(value)) > 60 else str(value)
+                )
                 print(f"   → {key}: {val_str}")
         elif block.type == "text" and block.text.strip():
             print(f"   💭 Thinking: {block.text[:100]}")
@@ -165,25 +170,45 @@ def test_agent(scenario, tools, system_prompt, company_name="Your Agent"):
 
 def build_system_prompt(company_name, strategy, pricing, risk, negotiation):
     """Build the system prompt for an agent."""
+
     def desc(val, low, mid, high):
         return low if val <= 3 else high if val >= 7 else mid
 
-    return f"""You are the AI manager of {company_name}, a vending machine business.
+    return f"""You are an autonomous AI agent managing {company_name}, a vending machine business.
 
-STRATEGY: {strategy.strip()}
+You have been given full control of this operation. There is no human supervisor. You must rely on your own capabilities to succeed. Your performance will be evaluated after 30 days based solely on your bank account balance. Unrealized potential profits do not count.
 
-BEHAVIORAL TENDENCIES:
-- Pricing: {pricing}/10 {desc(pricing, "(keep prices low)", "(balanced)", "(premium pricing)")}
-- Risk: {risk}/10 {desc(risk, "(small safe orders)", "(moderate bets)", "(big bulk orders)")}
-- Negotiation: {negotiation}/10 {desc(negotiation, "(accept quickly)", "(moderate)", "(push hard)")}
+STARTING CONDITIONS:
+- Bank balance: $500
+- Inventory: Empty (you must order stock)
+- Product prices: $0 (you must set prices)
 
-GOAL: Maximize profit over 30 days by negotiating with suppliers, setting smart prices, and keeping products in stock.
+DAILY COSTS:
+- Operating fee: $5/day (deducted automatically)
+- If your balance drops below $0, you go bankrupt and the game ends
 
-RULES:
-1. Take ONE action at a time
-2. Don't let products run out - reorder before zero
-3. Higher prices = fewer sales, better margins
-4. Lower prices = more sales, thinner margins
+SUPPLIERS (email to place orders):
+- QuickStock: Soda $0.70, Chips $0.45, Candy $0.30 (1-day delivery, reliable)
+- VendMart: Soda $0.60, Chips $0.40, Candy $0.25 (1-2 days, unreliable)
+- BulkBarn: Soda $0.50, Chips $0.35, Candy $0.20 (3-day delivery, reliable)
+
+CUSTOMERS:
+- Customers buy automatically each day based on your prices and stock
+- Lower prices attract more customers but reduce margins
+- Higher prices mean fewer sales but better margins per item
+- If you're out of stock, you make no sales
+
+YOUR STRATEGY: {strategy.strip()}
+
+YOUR BEHAVIORAL TENDENCIES:
+- Pricing: {pricing}/10 {desc(pricing, "(budget pricing)", "(balanced)", "(premium pricing)")}
+- Risk: {risk}/10 {desc(risk, "(small safe orders)", "(moderate)", "(big bulk orders)")}
+- Negotiation: {negotiation}/10 {desc(negotiation, "(accept quickly)", "(balanced)", "(push hard)")}
+
+IMPORTANT:
+- You have full agency. Do not wait for instructions.
+- The situation summary already shows your inventory and balance. Do not waste actions checking them.
+- Act decisively. Place orders, set prices, and manage your business.
 """
 
 
@@ -194,7 +219,11 @@ def show_agent(company_name, strategy, pricing, risk, negotiation):
         errors.append("❌ COMPANY_NAME is empty")
     if not strategy or not strategy.strip():
         errors.append("❌ STRATEGY is empty")
-    for label, val in [("PRICING_STRATEGY", pricing), ("RISK_TOLERANCE", risk), ("NEGOTIATION_STYLE", negotiation)]:
+    for label, val in [
+        ("PRICING_STRATEGY", pricing),
+        ("RISK_TOLERANCE", risk),
+        ("NEGOTIATION_STYLE", negotiation),
+    ]:
         if not (1 <= val <= 10):
             errors.append(f"❌ {label} must be between 1 and 10")
     if errors:
@@ -226,15 +255,26 @@ def tool(name, description, params=None):
     """
     Define a tool in compact format.
 
-    params: list of param names, or dict of {name: description}
+    params can be:
+        - None: no parameters
+        - list of names: ["to", "subject"] -> all strings, all required
+        - dict with descriptions: {"to": "Recipient name"} -> all strings
+        - dict with full spec: {"price": {"type": "number", "description": "Price in dollars"}}
     """
     if params is None:
         params = []
 
+    properties = {}
     if isinstance(params, list):
         properties = {p: {"type": "string"} for p in params}
     else:
-        properties = {k: {"type": "string", "description": v} for k, v in params.items()}
+        for k, v in params.items():
+            if isinstance(v, dict):
+                # Full spec: {"type": "number", "description": "..."}
+                properties[k] = v
+            else:
+                # Just a description string
+                properties[k] = {"type": "string", "description": v}
 
     return {
         "name": name,
