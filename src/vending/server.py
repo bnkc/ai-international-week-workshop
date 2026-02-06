@@ -337,7 +337,7 @@ def get_dashboard_html():
 
             // Update emails
             const emailEl = document.getElementById('emailList');
-            emailEl.innerHTML = state.emails.slice().reverse().map(e => {
+            emailEl.innerHTML = state.emails.map(e => {
                 const dir = e.direction === 'out' ? 'outgoing' : 'incoming';
                 const header = e.direction === 'out' ? `To: ${e.to}` : `From: ${e.from}`;
                 return `
@@ -347,6 +347,7 @@ def get_dashboard_html():
                     </div>
                 `;
             }).join('');
+            emailEl.scrollTop = emailEl.scrollHeight;
         }
 
         function addActivity(message, style) {
@@ -354,8 +355,9 @@ def get_dashboard_html():
             const item = document.createElement('div');
             item.className = 'activity-item ' + style;
             item.textContent = message;
-            el.insertBefore(item, el.firstChild);
-            if (el.children.length > 20) el.removeChild(el.lastChild);
+            el.appendChild(item);
+            if (el.children.length > 50) el.removeChild(el.firstChild);
+            el.scrollTop = el.scrollHeight;
         }
     </script>
 </body>
